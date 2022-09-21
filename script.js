@@ -1,10 +1,10 @@
 let allProducts = [
-    { id: 1, title: 'Album 1', price: 12.93, img: 'Images/Album 1.png' },
-    { id: 2, title: 'Album 2', price: 21, img: 'Images/Album 2.png' },
-    { id: 3, title: 'Album 3', price: 33, img: 'Images/Album 3.png' },
-    { id: 4, title: 'Album 4', price: 41.98, img: 'Images/Album 4.png' },
-    { id: 5, title: 'Coffee', price: 98, img: 'Images/Cofee.png' },
-    { id: 6, title: 'Shirt', price: 65.33, img: 'Images/Shirt.png' },
+    { id: 1, title: 'product1', price: 12, img: 'Images/product1.jpg', count:  1 },
+    { id: 2, title: 'product2', price: 21, img: 'Images/product2.jpg', count: 1 },
+    { id: 3, title: 'product3', price: 33, img: 'Images/product3.jpg', count: 1 },
+    { id: 4, title: 'product4', price: 41, img: 'Images/product4.jpg', count: 1 },
+    { id: 5, title: 'product5', price: 98, img: 'Images/product5.jpg', count: 1 },
+    { id: 6, title: 'product6', price: 65, img: 'Images/product6.jpg', count: 1 },
 ]
 
 let userBasket = []
@@ -12,6 +12,8 @@ let userBasket = []
 let $ = document
 const shopItemsContainer = $.querySelector('.shop-items')
 const bastekProductsContainer = $.querySelector('.cart-items')
+const removeAllProductsBtn = $.querySelector('#remove-all-products')
+const cartTotalPriceElem = $.querySelector('.cart-total-price')
 
 allProducts.forEach(function (product) {
     let productContainer = $.createElement('div')
@@ -56,6 +58,7 @@ function addProductToBasketArray (productId) {
     userBasket.push(mainProduct)
 
     basketProductsGenerator(userBasket)
+    calcTotalPrice(userBasket)
 
     // console.log(userBasket);
 }
@@ -92,12 +95,23 @@ function basketProductsGenerator (userBasketArray) {
 
         let basketProductInput = $.createElement('input')
         basketProductInput.className = 'cart-quantity-input'
-        basketProductInput.value = '1'
+        // basketProductInput.value = '1'
+        basketProductInput.value = product.count
+        basketProductInput.addEventListener('change', function(){
+            updateProductCount (product.id, basketProductInput.value)
+        })
+
+
+
         basketProductInput.setAttribute('type', 'number')
 
         let basketProductRemoveBtn = $.createElement('button')
         basketProductRemoveBtn.className = 'btn btn-danger'
         basketProductRemoveBtn.innerHTML = 'Remove'
+        basketProductRemoveBtn.addEventListener('click', function(){
+            removeProductFromBasket(product.id)
+        })
+
 
         basketProductInputsContainer.append(basketProductInput, basketProductRemoveBtn)
 
@@ -106,7 +120,48 @@ function basketProductsGenerator (userBasketArray) {
         bastekProductsContainer.append(basketProductContainer)
 
         
-        console.log(bastekProductsContainer);
+        // console.log(bastekProductsContainer);
 
     })
 }
+
+    function removeProductFromBasket(productId){
+    // console.log(productId);
+    userBasket = userBasket.filter(function(product){
+        return product.id !== productId
+    })
+    // console.log(userBasket);
+    basketProductsGenerator(userBasket )
+
+}
+
+    removeAllProductsBtn.addEventListener('click', function(){
+        userBasket = []
+        basketProductsGenerator(userBasket )
+          console.log(userBasket);
+
+    })
+
+    function calcTotalPrice(userBasketArray){
+        let totalPriceValue = 0
+        userBasketArray.forEach(function (product){
+            totalPriceValue += product.count * product.price
+        })
+
+        cartTotalPriceElem.innerHTML = totalPriceValue 
+
+    }
+
+
+    function updateProductCount (productId, newCount){
+        console.log('productId:' + productId + 'newCount:' + newCount);
+
+
+        userBasket.forEach(function(product){
+            if (product.id === productId){
+                product.count = newCount
+
+            }
+        })
+        calcTotalPrice (userBasket)
+    }
