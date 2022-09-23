@@ -132,13 +132,15 @@ function basketProductsGenerator (userBasketArray) {
     })
     // console.log(userBasket);
     basketProductsGenerator(userBasket )
+    calcTotalPrice(userBasket)
 
 }
 
     removeAllProductsBtn.addEventListener('click', function(){
         userBasket = []
         basketProductsGenerator(userBasket )
-          console.log(userBasket);
+        //   console.log(userBasket);
+        calcTotalPrice(userBasket)
 
     })
 
